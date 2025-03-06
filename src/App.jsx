@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import {app, database} from './firebaseconfig'
 import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword} from 'firebase/auth'
-import {collection, addDoc, getDocs} from 'firebase/firestore'
+import {collection, addDoc, getDocs, doc, updateDoc} from 'firebase/firestore'
 
 
 function App() {
@@ -69,6 +69,27 @@ function App() {
     })
   }
 
+  const getData = async()=>{
+    const data =  await getDocs(dbInstance)
+    console.log(data.docs.map(doc=>{
+      return {...doc.data(), id: doc.id}
+    }))
+  }
+
+  const updateData = ()=>{
+    const dataToUpdate = doc(database, 'users', '1');
+    updateDoc(dataToUpdate, {
+      name: 'John Doe'
+    })
+    .then((response)=>{
+      console.log(response);
+    })
+    .catch((error)=>{
+      console.log(error);
+    })
+    
+  }
+
   return (
     <>
       <div>
@@ -78,8 +99,10 @@ function App() {
         <input  onChange={e=>{handleInput(e)}} name='password' placeholder='password' type="password" /><br />
         <button onClick={handleSubmit}>Sign Up</button>
         <br />
-        <button onClick={handleLogIn} type="button" class="btn btn-primary">SignIn</button>
-        <button onClick={addData}>Add Data</button>
+        <button onClick={handleLogIn} type="button" class="btn btn-primary">SignIn</button><br />
+        <button onClick={addData}>Add Data</button><br />
+        <button onClick={getData}>Get Data</button><br />
+        <button onClick={updateData}>Update Data</button>
         
       </div>
     </>
